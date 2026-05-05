@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSchedule Pro — Cahier de texte</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background-color: #f0f4f8; min-height: 100vh; }
+
+        .navbar-edu {
+            background-color: #1a56db;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        .navbar-edu .navbar-brand { color: white; font-weight: 700; font-size: 1.3rem; }
+
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            left: 0;
+            width: 250px;
+            height: calc(100vh - 56px);
+            background-color: #1e293b;
+            padding: 20px 0;
+            overflow-y: auto;
+            z-index: 999;
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.7);
+            padding: 12px 20px;
+            font-size: 0.95rem;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+            border-left: 3px solid #1a56db;
+        }
+        .sidebar .nav-link i { margin-right: 10px; width: 20px; }
+        .sidebar-title {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            letter-spacing: 1px;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            margin-top: 56px;
+            padding: 30px;
+        }
+
+        .card-edu {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        .card-edu h5 {
+            color: #1e293b;
+            font-weight: 600;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f0f4f8;
+            padding-bottom: 10px;
+        }
+
+        /* Signature pad */
+        .signature-zone {
+            border: 2px dashed #1a56db;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            cursor: crosshair;
+            display: block;
+            width: 100%;
+            height: 150px;
+        }
+
+        .signature-label {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        /* Statuts cahier */
+        .badge-brouillon { background-color: #6b7280; }
+        .badge-signe-delegue { background-color: #f59e0b; }
+        .badge-cloture { background-color: #10b981; }
+
+        /* Info séance */
+        .info-seance {
+            background-color: #f0f7ff;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid #1a56db;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-edu">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-calendar-check"></i> EduSchedule Pro
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <a href="#" class="text-white position-relative">
+                    <i class="bi bi-bell fs-5"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
+                </a>
+                <div class="dropdown">
+                    <a href="#" class="text-white dropdown-toggle text-decoration-none" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle fs-5"></i> Délégué
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Mon profil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="login.html"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <p class="sidebar-title">Menu principal</p>
+        <nav class="nav flex-column">
+            <a href="dashboard.html" class="nav-link">
+                <i class="bi bi-speedometer2"></i> Tableau de bord
+            </a>
+            <a href="emploi_temps.html" class="nav-link">
+                <i class="bi bi-calendar3"></i> Emploi du temps
+            </a>
+            <a href="pointage.html" class="nav-link">
+                <i class="bi bi-qr-code-scan"></i> Pointage QR-Code
+            </a>
+            <a href="cahier_texte.html" class="nav-link active">
+                <i class="bi bi-journal-text"></i> Cahier de texte
+            </a>
+            <a href="vacation.html" class="nav-link">
+                <i class="bi bi-cash-stack"></i> Fiches de vacation
+            </a>
+        </nav>
+        <p class="sidebar-title mt-3">Administration</p>
+        <nav class="nav flex-column">
+            <a href="#" class="nav-link"><i class="bi bi-people"></i> Enseignants</a>
+            <a href="#" class="nav-link"><i class="bi bi-mortarboard"></i> Classes</a>
+            <a href="#" class="nav-link"><i class="bi bi-book"></i> Matières</a>
+            <a href="#" class="nav-link"><i class="bi bi-building"></i> Salles</a>
+            <a href="#" class="nav-link"><i class="bi bi-file-bar-graph"></i> Rapports</a>
+            <a href="#" class="nav-link"><i class="bi bi-clock-history"></i> Logs activité</a>
+        </nav>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="main-content">
+
+        <!-- Titre -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="fw-bold text-dark mb-0">Cahier de texte</h4>
+                <p class="text-muted mb-0">Saisie et validation du contenu pédagogique</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-success btn-sm">
+                    <i class="bi bi-file-pdf"></i> Export PDF
+                </button>
+            </div>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- Colonne gauche : Formulaire -->
+            <div class="col-md-8">
+
+                <!-- Infos séance (auto) -->
+                <div class="card-edu">
+                    <h5><i class="bi bi-info-circle"></i> Informations de la séance</h5>
+                    <div class="info-seance">
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <small class="text-muted">Classe</small>
+                                <div class="fw-semibold">L1-INFO</div>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted">Matière</small>
+                                <div class="fw-semibold">Algorithmique</div>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted">Enseignant</small>
+                                <div class="fw-semibold">M. KABORE Aminata</div>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted">Date</small>
+                                <div class="fw-semibold">05 Mai 2025</div>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted">Heure début réelle</small>
+                                <div class="fw-semibold text-success">08h05 <i class="bi bi-check-circle"></i></div>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted">Statut</small>
+                                <div><span class="badge badge-brouillon">Brouillon</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contenu pédagogique (saisi par délégué) -->
+                <div class="card-edu">
+                    <h5><i class="bi bi-pencil-square"></i> Contenu pédagogique</h5>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Titre du cours</label>
+                        <input type="text" class="form-control" placeholder="Ex: Introduction aux algorithmes de tri">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Points vus dans le cours</label>
+                        <textarea class="form-control" rows="4" placeholder="Liste des notions, concepts, exercices traités..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Niveau d'avancement du programme</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Ex: Chapitre 2 / 5">
+                            <span class="input-group-text">%</span>
+                            <input type="number" class="form-control" placeholder="40" min="0" max="100">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Observations</label>
+                        <textarea class="form-control" rows="2" placeholder="Incidents, retards, absences signalées..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Travaux demandés -->
+                <div class="card-edu">
+                    <h5><i class="bi bi-list-task"></i> Travaux demandés</h5>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" placeholder="Description du travail">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select">
+                                <option>Devoir</option>
+                                <option>Exercice</option>
+                                <option>Projet</option>
+                                <option>Autre</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary w-100">
+                                <i class="bi bi-plus"></i> Ajouter
+                            </button>
+                        </div>
+                    </div>
+                    <table class="table table-sm table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Description</th>
+                                <th>Date limite</th>
+                                <th>Type</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Exercices page 45</td>
+                                <td>12 Mai 2025</td>
+                                <td><span class="badge bg-primary">Exercice</span></td>
+                                <td><button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Signatures -->
+                <div class="card-edu">
+                    <h5><i class="bi bi-pen"></i> Signatures numériques</h5>
+                    <div class="row g-4">
+
+                        <!-- Signature délégué -->
+                        <div class="col-md-6">
+                            <div class="signature-label">
+                                <i class="bi bi-person"></i> Signature du délégué
+                            </div>
+                            <canvas class="signature-zone" id="signatureDelegue"></canvas>
+                            <div class="d-flex gap-2 mt-2">
+                                <button class="btn btn-sm btn-outline-danger w-50">
+                                    <i class="bi bi-trash"></i> Effacer
+                                </button>
+                                <button class="btn btn-sm btn-success w-50">
