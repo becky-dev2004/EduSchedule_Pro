@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSchedule Pro — Pointage QR-Code</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background-color: #f0f4f8; min-height: 100vh; }
+
+        /* Navbar */
+        .navbar-edu {
+            background-color: #1a56db;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        .navbar-edu .navbar-brand { color: white; font-weight: 700; font-size: 1.3rem; }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            left: 0;
+            width: 250px;
+            height: calc(100vh - 56px);
+            background-color: #1e293b;
+            padding: 20px 0;
+            overflow-y: auto;
+            z-index: 999;
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.7);
+            padding: 12px 20px;
+            font-size: 0.95rem;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+            border-left: 3px solid #1a56db;
+        }
+        .sidebar .nav-link i { margin-right: 10px; width: 20px; }
+        .sidebar-title {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            letter-spacing: 1px;
+        }
+
+        /* Contenu principal */
+        .main-content {
+            margin-left: 250px;
+            margin-top: 56px;
+            padding: 30px;
+        }
+
+        /* Card */
+        .card-edu {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        .card-edu h5 {
+            color: #1e293b;
+            font-weight: 600;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f0f4f8;
+            padding-bottom: 10px;
+        }
+
+        /* Zone scanner QR */
+        .qr-scanner-zone {
+            border: 3px dashed #1a56db;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            background-color: #f0f7ff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .qr-scanner-zone:hover {
+            background-color: #dbeafe;
+            border-color: #1341a8;
+        }
+        .qr-scanner-icon {
+            font-size: 5rem;
+            color: #1a56db;
+        }
+
+        /* Statuts */
+        .statut-encours {
+            background-color: #d1fae5;
+            border-left: 4px solid #10b981;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .statut-retard {
+            background-color: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .statut-absent {
+            background-color: #fee2e2;
+            border-left: 4px solid #ef4444;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        /* Badge statuts */
+        .badge-encours { background-color: #10b981; }
+        .badge-retard { background-color: #f59e0b; }
+        .badge-absent { background-color: #ef4444; }
+
+        /* QR Code affiché */
+        .qr-display {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .qr-placeholder {
+            width: 150px;
+            height: 150px;
+            background-color: #f0f4f8;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 3rem;
+            color: #6b7280;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-edu">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-calendar-check"></i> EduSchedule Pro
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <a href="#" class="text-white position-relative">
+                    <i class="bi bi-bell fs-5"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
+                </a>
+                <div class="dropdown">
+                    <a href="#" class="text-white dropdown-toggle text-decoration-none" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle fs-5"></i> Enseignant
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Mon profil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="login.html"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <p class="sidebar-title">Menu principal</p>
+        <nav class="nav flex-column">
+            <a href="dashboard.html" class="nav-link">
+                <i class="bi bi-speedometer2"></i> Tableau de bord
+            </a>
+            <a href="emploi_temps.html" class="nav-link">
+                <i class="bi bi-calendar3"></i> Emploi du temps
+            </a>
+            <a href="pointage.html" class="nav-link active">
+                <i class="bi bi-qr-code-scan"></i> Pointage QR-Code
+            </a>
+            <a href="cahier_texte.html" class="nav-link">
+                <i class="bi bi-journal-text"></i> Cahier de texte
+            </a>
+            <a href="vacation.html" class="nav-link">
+                <i class="bi bi-cash-stack"></i> Fiches de vacation
+            </a>
+        </nav>
+        <p class="sidebar-title mt-3">Administration</p>
+        <nav class="nav flex-column">
+            <a href="#" class="nav-link"><i class="bi bi-people"></i> Enseignants</a>
+            <a href="#" class="nav-link"><i class="bi bi-mortarboard"></i> Classes</a>
+            <a href="#" class="nav-link"><i class="bi bi-book"></i> Matières</a>
+            <a href="#" class="nav-link"><i class="bi bi-building"></i> Salles</a>
+            <a href="#" class="nav-link"><i class="bi bi-file-bar-graph"></i> Rapports</a>
+            <a href="#" class="nav-link"><i class="bi bi-clock-history"></i> Logs activité</a>
+        </nav>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="main-content">
+
+        <!-- Titre -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="fw-bold text-dark mb-0">Pointage QR-Code</h4>
+                <p class="text-muted mb-0">Validation de présence des enseignants</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- Colonne gauche : Scanner -->
+            <div class="col-md-6">
+
+                <!-- Zone de scan -->
+                <div class="card-edu">
+                    <h5><i class="bi bi-qr-code-scan"></i> Scanner un QR-Code</h5>
+                    <div class="qr-scanner-zone" id="scannerZone">
+                        <div class="qr-scanner-icon">
+                            <i class="bi bi-qr-code-scan"></i>
+                        </div>
+                        <h5 class="mt-3 text-primary fw-bold">Scanner le QR-Code</h5>
+                        <p class="text-muted">Cliquez ici pour activer la caméra et scanner le QR-Code de la séance</p>
+                        <button class="btn btn-primary mt-2">
+                            <i class="bi bi-camera"></i> Activer la caméra
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Saisie manuelle -->
+                <div class="card-edu">
+                    <h5><i class="bi bi-keyboard"></i> Saisie manuelle du code</h5>
+                    <p class="text-muted small">En cas de problème technique avec le scanner</p>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Entrez le code de la séance">
+                        <button class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Valider
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Colonne droite : Infos séance + QR -->
+            <div class="col-md-6">
+
+                <!-- Informations de la séance -->
+                <div class="card-edu">
+                    <h5><i class="bi bi-info-circle"></i> Informations de la séance</h5>
+                    <div class="statut-encours mb-3">
+                        <div class="d-flex justify-content-between">
+                            <strong>Algorithmique</strong>
+                            <span class="badge badge-encours">En cours</span>
+                        </div>
+                        <div class="mt-2 text-muted small">
+                            <div><i class="bi bi-mortarboard"></i> Classe : L1-INFO</div>
+                            <div><i class="bi bi-building"></i> Salle : A101</div>
+                            <div><i class="bi bi-clock"></i> Heure prévue : 08h00 - 10h00</div>
+                            <div><i class="bi bi-clock-history"></i> Heure réelle : 08h05</div>
+                            <div><i class="bi bi-person"></i> Enseignant : M. KABORE</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-success w-100">
+                        <i class="bi bi-check-circle"></i> Confirmer le pointage
+                    </button>
+                </div>
+
+                <!-- QR Codes générés -->
+                <div class="card-edu">
+                    <h5><i class="bi bi-qr-code"></i> QR-Codes du jour</h5>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="qr-display">
+                                <div class="qr-placeholder">
+                                    <i class="bi bi-qr-code"></i>
+                                </div>
+                                <div class="fw-semibold small">Algorithmique</div>
+                                <div class="text-muted" style="font-size:0.75rem">L1-INFO — 08h00</div>
+                                <span class="badge badge-encours mt-1">Valide</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="qr-display">
+                                <div class="qr-placeholder">
+                                    <i class="bi bi-qr-code"></i>
+                                </div>
+                                <div class="fw-semibold small">Base de Données</div>
+                                <div class="text-muted" style="font-size:0.75rem">L2-INFO — 10h00</div>
+                                <span class="badge badge-retard mt-1">Retard</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Historique des pointages -->
+        <div class="card-edu">
+            <h5><i class="bi bi-clock-history"></i> Historique des pointages du jour</h5>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Heure pointage</th>
+                            <th>Enseignant</th>
+                            <th>Matière</th>
+                            <th>Classe</th>
+                            <th>Salle</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>08h05</td>
+                            <td>M. KABORE</td>
+                            <td>Algorithmique</td>
+                            <td>L1-INFO</td>
+                            <td>A101</td>
+                            <td><span class="badge badge-encours">Pointé</span></td>
+                        </tr>
+                        <tr>
+                            <td>10h35</td>
+                            <td>M. OUEDRAOGO</td>
+                            <td>Base de Données</td>
+                            <td>L2-INFO</td>
+                            <td>B201</td>
