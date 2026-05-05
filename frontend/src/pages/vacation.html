@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSchedule Pro — Fiches de vacation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background-color: #f0f4f8; min-height: 100vh; }
+
+        .navbar-edu {
+            background-color: #1a56db;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        .navbar-edu .navbar-brand { color: white; font-weight: 700; font-size: 1.3rem; }
+
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            left: 0;
+            width: 250px;
+            height: calc(100vh - 56px);
+            background-color: #1e293b;
+            padding: 20px 0;
+            overflow-y: auto;
+            z-index: 999;
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.7);
+            padding: 12px 20px;
+            font-size: 0.95rem;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+            border-left: 3px solid #1a56db;
+        }
+        .sidebar .nav-link i { margin-right: 10px; width: 20px; }
+        .sidebar-title {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            letter-spacing: 1px;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            margin-top: 56px;
+            padding: 30px;
+        }
+
+        .card-edu {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        .card-edu h5 {
+            color: #1e293b;
+            font-weight: 600;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f0f4f8;
+            padding-bottom: 10px;
+        }
+
+        .badge-generee { background-color: #6b7280; }
+        .badge-signee { background-color: #f59e0b; }
+        .badge-visee { background-color: #1a56db; }
+        .badge-approuvee { background-color: #10b981; }
+
+        .vacation-header {
+            background: linear-gradient(135deg, #1a56db, #1341a8);
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .total-box {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            color: #1e293b;
+        }
+
+        .total-box .montant {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a56db;
+        }
+
+        .workflow-step {
+            text-align: center;
+            padding: 15px;
+        }
+        .workflow-step .step-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 1.3rem;
+        }
+        .step-done { background-color: #d1fae5; color: #10b981; }
+        .step-current { background-color: #dbeafe; color: #1a56db; }
+        .step-pending { background-color: #f3f4f6; color: #9ca3af; }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-edu">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-calendar-check"></i> EduSchedule Pro
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <a href="#" class="text-white position-relative">
+                    <i class="bi bi-bell fs-5"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
+                </a>
+                <div class="dropdown">
+                    <a href="#" class="text-white dropdown-toggle text-decoration-none" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle fs-5"></i> Enseignant
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Mon profil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="login.html"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <p class="sidebar-title">Menu principal</p>
+        <nav class="nav flex-column">
+            <a href="dashboard.html" class="nav-link">
+                <i class="bi bi-speedometer2"></i> Tableau de bord
+            </a>
+            <a href="emploi_temps.html" class="nav-link">
+                <i class="bi bi-calendar3"></i> Emploi du temps
+            </a>
+            <a href="pointage.html" class="nav-link">
+                <i class="bi bi-qr-code-scan"></i> Pointage QR-Code
+            </a>
+            <a href="cahier_texte.html" class="nav-link">
+                <i class="bi bi-journal-text"></i> Cahier de texte
+            </a>
+            <a href="vacation.html" class="nav-link active">
+                <i class="bi bi-cash-stack"></i> Fiches de vacation
+            </a>
+        </nav>
+        <p class="sidebar-title mt-3">Administration</p>
+        <nav class="nav flex-column">
+            <a href="#" class="nav-link"><i class="bi bi-people"></i> Enseignants</a>
+            <a href="#" class="nav-link"><i class="bi bi-mortarboard"></i> Classes</a>
+            <a href="#" class="nav-link"><i class="bi bi-book"></i> Matières</a>
+            <a href="#" class="nav-link"><i class="bi bi-building"></i> Salles</a>
+            <a href="#" class="nav-link"><i class="bi bi-file-bar-graph"></i> Rapports</a>
+            <a href="#" class="nav-link"><i class="bi bi-clock-history"></i> Logs activité</a>
+        </nav>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="main-content">
+
+        <!-- Titre -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="fw-bold text-dark mb-0">Fiches de vacation</h4>
+                <p class="text-muted mb-0">Calcul et validation des vacations enseignants</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-circle"></i> Générer une fiche
+                </button>
+                <button class="btn btn-outline-success btn-sm">
+                    <i class="bi bi-file-pdf"></i> Export PDF
+                </button>
+            </div>
+        </div>
+
+        <!-- En-tête fiche vacation -->
+        <div class="vacation-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="mb-1 fw-bold">Fiche de Vacation — Mai 2025</h5>
+                    <p class="mb-0 opacity-75">M. KABORE Aminata — Matricule : M1</p>
+                    <p class="mb-0 opacity-75">Spécialité : Algorithmique — Statut : Permanent</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="total-box">
+                        <div class="small text-muted">Montant net à payer</div>
+                        <div class="montant">125 000 FCFA</div>
+                        <div class="small text-muted">Pour 25 heures effectuées</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflow de validation -->
+        <div class="card-edu">
+            <h5><i class="bi bi-diagram-3"></i> Workflow de validation</h5>
+            <div class="row g-0">
+                <div class="col workflow-step">
+                    <div class="step-icon step-done">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+                    <div class="fw-semibold small">Générée</div>
+                    <div class="text-muted" style="font-size:0.75rem">01 Mai 2025</div>
+                </div>
+                <div class="col d-flex align-items-center justify-content-center">
+                    <i class="bi bi-arrow-right text-muted"></i>
+                </div>
+                <div class="col workflow-step">
+                    <div class="step-icon step-current">
+                        <i class="bi bi-pen"></i>
+                    </div>
+                    <div class="fw-semibold small">Signée enseignant</div>
+                    <div class="text-muted" style="font-size:0.75rem">En attente</div>
+                </div>
+                <div class="col d-flex align-items-center justify-content-center">
+                    <i class="bi bi-arrow-right text-muted"></i>
+                </div>
+                <div class="col workflow-step">
+                    <div class="step-icon step-pending">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div class="fw-semibold small">Visa surveillant</div>
+                    <div class="text-muted" style="font-size:0.75rem">En attente</div>
+                </div>
+                <div class="col d-flex align-items-center justify-content-center">
+                    <i class="bi bi-arrow-right text-muted"></i>
+                </div>
+                <div class="col workflow-step">
+                    <div class="step-icon step-pending">
+                        <i class="bi bi-cash-coin"></i>
+                    </div>
+                    <div class="fw-semibold small">Validation comptable</div>
+                    <div class="text-muted" style="font-size:0.75rem">En attente</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tableau détail séances -->
+        <div class="card-edu">
+            <h5><i class="bi bi-table"></i> Détail des séances du mois</h5>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Matière</th>
+                            <th>Classe</th>
+                            <th>Heure début</th>
+                            <th>Heure fin</th>
+                            <th>Durée (h)</th>
+                            <th>Taux (FCFA)</th>
+                            <th>Montant (FCFA)</th>
+                            <th>Cahier</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>02 Mai 2025</td>
+                            <td>Algorithmique</td>
+                            <td>L1-INFO</td>
+                            <td>08h05</td>
+                            <td>10h00</td>
+                            <td>1h55</td>
+                            <td>5 000</td>
+                            <td>9 583</td>
+                            <td><span class="badge bg-success">Signé</span></td>
+                        </tr>
+                        <tr>
+                            <td>04 Mai 2025</td>
+                            <td>Algorithmique</td>
+                            <td>L2-INFO</td>
+                            <td>10h00</td>
+                            <td>12h00</td>
+                            <td>2h00</td>
+                            <td>5 000</td>
+                            <td>10 000</td>
+                            <td><span class="badge bg-success">Signé</span></td>
+                        </tr>
+                        <tr>
+                            <td>05 Mai 2025</td>
+                            <td>Algorithmique</td>
+                            <td>L1-INFO</td>
+                            <td>08h05</td>
+                            <td>10h00</td>
+                            <td>1h55</td>
+                            <td>5 000</td>
+                            <td>9 583</td>
+                            <td><span class="badge bg-warning">En cours</span></td>
+                        </tr>
+                    </tbody>
+                    <tfoot class="table-light fw-bold">
+                        <tr>
+                            <td colspan="5" class="text-end">Total</td>
+                            <td>5h50</td>
+                            <td>—</td>
+                            <td>29 166 FCFA</td>
+                            <td>—</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- Récapitulatif financier -->
+        <div class="card-edu">
+            <h5><i class="bi bi-calculator"></i> Récapitulatif financier</h5>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="p-3 bg-light rounded text-center">
+                        <div class="text-muted small">Total heures mois</div>
+                        <div class="fs-4 fw-bold text-primary">25h00</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 bg-light rounded text-center">
+                        <div class="text-muted small">Montant brut</div>
+                        <div class="fs-4 fw-bold text-dark">125 000 FCFA</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 bg-light rounded text-center">
+                        <div class="text-muted small">Montant net à payer</div>
+                        <div class="fs-4 fw-bold text-success">125 000 FCFA</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signature enseignant -->
+        <div class="card-edu">
+            <h5><i class="bi bi-pen"></i> Signature de validation</h5>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="fw-semibold mb-2">
+                        <i class="bi bi-person-badge"></i> Signature enseignant
+                    </div>
+                    <canvas id="signatureVacation"
+                        style="border: 2px dashed #1a56db; border-radius: 8px; background:#f8fafc; cursor:crosshair; width:100%; height:120px;">
+                    </canvas>
+                    <div class="d-flex gap-2 mt-2">
+                        <button class="btn btn-sm btn-outline-danger w-50">
+                            <i class="bi bi-trash"></i> Effacer
+                        </button>
+                        <button class="btn btn-sm btn-success w-50">
+                            <i class="bi bi-check"></i> Signer la fiche
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex align-items-center">
+                    <div class="alert alert-info w-100">
+                        <i class="bi bi-info-circle"></i>
+                        En signant cette fiche, vous confirmez que les heures déclarées sont exactes et correspondent aux séances effectivement réalisées.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des fiches -->
+        <div class="card-edu">
+            <h5><i class="bi bi-list"></i> Toutes mes fiches de vacation</h5>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Période</th>
+                            <th>Total heures</th>
+                            <th>Montant brut</th>
+                            <th>Montant net</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mai 2025</td>
+                            <td>25h00</td>
+                            <td>125 000 FCFA</td>
+                            <td>125 000 FCFA</td>
+                            <td><span class="badge badge-signee">Signée enseignant</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
+                                <button class="btn btn-sm btn-outline-success"><i class="bi bi-file-pdf"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Avril 2025</td>
+                            <td>30h00</td>
+                            <td>150 000 FCFA</td>
+                            <td>150 000 FCFA</td>
+                            <td><span class="badge badge-approuvee">Approuvée</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
+                                <button class="btn btn-sm btn-outline-success"><i class="bi bi-file-pdf"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Mars 2025</td>
+                            <td>20h00</td>
+                            <td>100 000 FCFA</td>
+                            <td>100 000 FCFA</td>
+                            <td><span class="badge badge-approuvee">Approuvée</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
+                                <button class="btn btn-sm btn-outline-success"><i class="bi bi-file-pdf"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Signature pad
+        const canvas = document.getElementById('signatureVacation');
+        const ctx = canvas.getContext('2d');
+        let dessiner = false;
+
+        canvas.addEventListener('mousedown', () => dessiner = true);
+        canvas.addEventListener('mouseup', () => dessiner = false);
+        canvas.addEventListener('mousemove', (e) => {
+            if (!dessiner) return;
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#1a56db';
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        });
+        canvas.addEventListener('mouseleave', () => dessiner = false);
+    </script>
+
+</body>
+</html>
