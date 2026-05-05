@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSchedule Pro — Emploi du temps</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        /* ============================================
+           EduSchedule Pro — Emploi du temps
+        ============================================ */
+        body { background-color: #f0f4f8; min-height: 100vh; }
+
+        /* Navbar */
+        .navbar-edu {
+            background-color: #1a56db;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        .navbar-edu .navbar-brand { color: white; font-weight: 700; font-size: 1.3rem; }
+        .navbar-edu .nav-link { color: rgba(255,255,255,0.8); }
+        .navbar-edu .nav-link:hover { color: white; }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            left: 0;
+            width: 250px;
+            height: calc(100vh - 56px);
+            background-color: #1e293b;
+            padding: 20px 0;
+            overflow-y: auto;
+            z-index: 999;
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.7);
+            padding: 12px 20px;
+            font-size: 0.95rem;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+            border-left: 3px solid #1a56db;
+        }
+        .sidebar .nav-link i { margin-right: 10px; width: 20px; }
+        .sidebar-title {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            letter-spacing: 1px;
+        }
+
+        /* Contenu principal */
+        .main-content {
+            margin-left: 250px;
+            margin-top: 56px;
+            padding: 30px;
+        }
+
+        /* Grille emploi du temps */
+        .emploi-temps-grid {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .grid-header {
+            background-color: #1a56db;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            font-weight: 600;
+        }
+
+        .grid-heure {
+            background-color: #f8fafc;
+            text-align: center;
+            padding: 10px;
+            font-size: 0.85rem;
+            color: #6b7280;
+            font-weight: 600;
+            border-right: 1px solid #e5e7eb;
+        }
+
+        .creneau {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 8px;
+            margin: 4px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .creneau:hover { transform: scale(1.02); }
+
+        .creneau-algo { background-color: #dbeafe; border-left: 3px solid #1a56db; }
+        .creneau-bdd { background-color: #d1fae5; border-left: 3px solid #10b981; }
+        .creneau-web { background-color: #fef3c7; border-left: 3px solid #f59e0b; }
+        .creneau-reseau { background-color: #fce7f3; border-left: 3px solid #ec4899; }
+        .creneau-math { background-color: #ede9fe; border-left: 3px solid #8b5cf6; }
+
+        .creneau-matiere { font-weight: 700; color: #1e293b; }
+        .creneau-enseignant { color: #6b7280; }
+        .creneau-salle { color: #6b7280; }
+
+        /* Filtres */
+        .card-edu {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-edu">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-calendar-check"></i> EduSchedule Pro
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <a href="#" class="text-white position-relative">
+                    <i class="bi bi-bell fs-5"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
+                </a>
+                <div class="dropdown">
+                    <a href="#" class="text-white dropdown-toggle text-decoration-none" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle fs-5"></i> Administrateur
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Mon profil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="login.html"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <p class="sidebar-title">Menu principal</p>
+        <nav class="nav flex-column">
+            <a href="dashboard.html" class="nav-link">
+                <i class="bi bi-speedometer2"></i> Tableau de bord
+            </a>
+            <a href="emploi_temps.html" class="nav-link active">
+                <i class="bi bi-calendar3"></i> Emploi du temps
+            </a>
+            <a href="pointage.html" class="nav-link">
+                <i class="bi bi-qr-code-scan"></i> Pointage QR-Code
+            </a>
+            <a href="cahier_texte.html" class="nav-link">
+                <i class="bi bi-journal-text"></i> Cahier de texte
+            </a>
+            <a href="vacation.html" class="nav-link">
+                <i class="bi bi-cash-stack"></i> Fiches de vacation
+            </a>
+        </nav>
+        <p class="sidebar-title mt-3">Administration</p>
+        <nav class="nav flex-column">
+            <a href="#" class="nav-link"><i class="bi bi-people"></i> Enseignants</a>
+            <a href="#" class="nav-link"><i class="bi bi-mortarboard"></i> Classes</a>
+            <a href="#" class="nav-link"><i class="bi bi-book"></i> Matières</a>
+            <a href="#" class="nav-link"><i class="bi bi-building"></i> Salles</a>
+            <a href="#" class="nav-link"><i class="bi bi-file-bar-graph"></i> Rapports</a>
+            <a href="#" class="nav-link"><i class="bi bi-clock-history"></i> Logs activité</a>
+        </nav>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="main-content">
+
+        <!-- Titre + boutons -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="fw-bold text-dark mb-0">Emploi du temps</h4>
+                <p class="text-muted mb-0">Semaine du 05 au 10 Mai 2025</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-arrow-left"></i> Semaine préc.
+                </button>
+                <button class="btn btn-outline-primary btn-sm">
+                    Semaine suiv. <i class="bi bi-arrow-right"></i>
+                </button>
+                <button class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-circle"></i> Nouveau créneau
+                </button>
+                <button class="btn btn-outline-success btn-sm">
+                    <i class="bi bi-file-pdf"></i> Export PDF
+                </button>
+            </div>
+        </div>
+
+        <!-- Filtres -->
+        <div class="card-edu">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Classe</label>
+                    <select class="form-select form-select-sm">
+                        <option>Toutes les classes</option>
+                        <option>L1-INFO</option>
+                        <option>L2-INFO</option>
+                        <option>L3-INFO</option>
+                        <option>M1-INFO</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Enseignant</label>
+                    <select class="form-select form-select-sm">
+                        <option>Tous les enseignants</option>
+                        <option>M. KABORE</option>
+                        <option>M. OUEDRAOGO</option>
+                        <option>Mme TRAORE</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Matière</label>
+                    <select class="form-select form-select-sm">
+                        <option>Toutes les matières</option>
+                        <option>Algorithmique</option>
+                        <option>Base de Données</option>
+                        <option>Développement Web</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-primary btn-sm w-100">
+                        <i class="bi bi-funnel"></i> Filtrer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grille hebdomadaire -->
+        <div class="card-edu">
+            <div class="table-responsive">
+                <table class="table table-bordered emploi-temps-grid mb-0">
+                    <thead>
+                        <tr>
+                            <th class="grid-header" style="width:80px">Heure</th>
+                            <th class="grid-header">Lundi</th>
+                            <th class="grid-header">Mardi</th>
+                            <th class="grid-header">Mercredi</th>
+                            <th class="grid-header">Jeudi</th>
+                            <th class="grid-header">Vendredi</th>
+                            <th class="grid-header">Samedi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="grid-heure">08h-10h</td>
+                            <td>
+                                <div class="creneau creneau-algo">
+                                    <div class="creneau-matiere">Algorithmique</div>
+                                    <div class="creneau-enseignant"><i class="bi bi-person"></i> KABORE</div>
+                                    <div class="creneau-salle"><i class="bi bi-building"></i> A101 — L1-INFO</div>
+                                </div>
+                            </td>
+                            <td></td>
+                            <td>
+                                <div class="creneau creneau-bdd">
+                                    <div class="creneau-matiere">Base de Données</div>
+                                    <div class="creneau-enseignant"><i class="bi bi-person"></i> OUEDRAOGO</div>
+                                    <div class="creneau-salle"><i class="bi bi-building"></i> B201 — L2-INFO</div>
+                                </div>
+                            </td>
+                            <td></td>
+                            <td>
+                                <div class="creneau creneau-web">
+                                    <div class="creneau-matiere">Développement Web</div>
+                                    <div class="creneau-enseignant"><i class="bi bi-person"></i> TRAORE</div>
+                                    <div class="creneau-salle"><i class="bi bi-building"></i> LABO1 — L3-INFO</div>
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="grid-heure">10h-12h</td>
+                            <td></td>
+                            <td>
+                                <div class="creneau creneau-math">
+                                    <div class="creneau-matiere">Mathématiques</div>
+                                    <div class="creneau-enseignant"><i class="bi bi-person"></i> ZONGO</div>
+                                    <div class="creneau-salle"><i class="bi bi-building"></i> A102 — L1-INFO</div>
+                                </div>
+                            </td>
+                            <td></td>
+                            <td>
+                                <div class="creneau creneau-algo">
+                                    <div class="creneau-matiere">Algorithmique</div>
+                                    <div class="creneau-enseignant"><i class="bi bi-person"></i> KABORE</div>
+                                    <div class="creneau-salle"><i class="bi bi-building"></i> A101 — L2-INFO</div>
+                                </div>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="grid-heure">14h-16h</td>
+                            <td>
+                                <div class="creneau creneau-reseau">
+                                    <div class="creneau-matiere">Réseaux</div>
+                                    <div class="creneau-enseignant"><i class="bi bi-person"></i> SANKARA</div>
+                                    <div class="creneau-salle"><i class="bi bi-building"></i> B201 — L3-INFO</div>
+                                </div>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <div class="creneau creneau-web">
+                                    <div class="creneau-matiere">Développement Web</div>
+                                    <div class="creneau-enseignant"><i class="bi bi-person"></i> TRAORE</div>
+                                    <div class="creneau-salle"><i class="bi bi-building"></i> LABO1 — M1-INFO</div>
+                                </div>
+                            </td>
+                            <td></td>
+                            <td>
+                                <div class="creneau creneau-bdd">
+                                    <div class="creneau-matiere">Base de Données</div>
+                                    <div class="creneau-enseignant"><i class="bi bi-person"></i> OUEDRAOGO</div>
+                                    <div class="creneau-salle"><i class="bi bi-building"></i> A102 — M1-INFO</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="grid-heure">16h-18h</td>
+                            <td></td>
+                            <td>
+                                <div class="creneau creneau-reseau">
+                                    <div class="creneau-matiere">Réseaux</div>
+                                    <div class="creneau-enseignant"><i class="bi bi-person"></i> SANKARA</div>
+                                    <div class="creneau-salle"><i class="bi bi-building"></i> B201 — L2-INFO</div>
+                                </div>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <div class="creneau creneau-math">
+                                    <div class="creneau-matiere">Mathématiques</div>
+                                    <div class="creneau-enseignant"><i class="bi bi-person"></i> ZONGO</div>
+                                    <div class="creneau-salle"><i class="bi bi-building"></i> A102 — L3-INFO</div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
