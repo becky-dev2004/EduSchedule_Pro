@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSchedule Pro — Connexion</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        /* ============================================
+           EduSchedule Pro — Style page connexion
+        ============================================ */
+        body {
+            background-color: #f0f4f8;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a56db;
+        }
+
+        .login-logo p {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .btn-login {
+            background-color: #1a56db;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .btn-login:hover {
+            background-color: #1341a8;
+            color: white;
+        }
+
+        .form-control:focus {
+            border-color: #1a56db;
+            box-shadow: 0 0 0 0.2rem rgba(26, 86, 219, 0.25);
+        }
+
+        .footer-login {
+            text-align: center;
+            margin-top: 20px;
+            color: #6b7280;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <!-- Logo et titre -->
+        <div class="login-logo">
+            <i class="bi bi-calendar-check" style="font-size: 3rem; color: #1a56db;"></i>
+            <h1>EduSchedule Pro</h1>
+            <p>Gestion Scolaire intelligente</p>
+        </div>
+
+        <!-- Formulaire de connexion -->
+        <form id="formConnexion">
+            <!-- Email -->
+            <div class="mb-3">
+                <label for="email" class="form-label fw-semibold">
+                    <i class="bi bi-envelope"></i> Adresse email
+                </label>
+                <input 
+                    type="email" 
+                    class="form-control" 
+                    id="email" 
+                    placeholder="votre@email.com"
+                    required
+                >
+            </div>
+
+            <!-- Mot de passe -->
+            <div class="mb-4">
+                <label for="motdepasse" class="form-label fw-semibold">
+                    <i class="bi bi-lock"></i> Mot de passe
+                </label>
+                <div class="input-group">
+                    <input 
+                        type="password" 
+                        class="form-control" 
+                        id="motdepasse" 
+                        placeholder="Votre mot de passe"
+                        required
+                    >
+                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Message d'erreur -->
+            <div class="alert alert-danger d-none" id="erreurConnexion">
+                <i class="bi bi-exclamation-triangle"></i>
+                Email ou mot de passe incorrect.
+            </div>
+
+            <!-- Bouton connexion -->
+            <button type="submit" class="btn-login">
+                <i class="bi bi-box-arrow-in-right"></i> Se connecter
+            </button>
+        </form>
+
+        <!-- Footer -->
+        <div class="footer-login">
+            <p>Année Universitaire 2025-2026</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Afficher/masquer le mot de passe
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const input = document.getElementById('motdepasse');
+            const icon = this.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('bi-eye', 'bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('bi-eye-slash', 'bi-eye');
+            }
+        });
+    </script>
+</body>
+</html>
