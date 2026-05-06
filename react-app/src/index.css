@@ -1,0 +1,168 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0f4f8;
+  color: #1e293b;
+}
+
+.navbar-edu {
+  background-color: #1a56db;
+  padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.navbar-edu .navbar-brand {
+  color: white;
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.sidebar {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  width: 250px;
+  height: calc(100vh - 56px);
+  background-color: #1e293b;
+  padding: 20px 0;
+  overflow-y: auto;
+  z-index: 999;
+}
+
+.sidebar .nav-link {
+  color: rgba(255,255,255,0.7);
+  padding: 12px 20px;
+  font-size: 0.95rem;
+  border-left: 3px solid transparent;
+  transition: all 0.3s;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+  color: white;
+  background-color: rgba(255,255,255,0.1);
+  border-left: 3px solid #1a56db;
+}
+
+.sidebar .nav-link i {
+  margin-right: 10px;
+  width: 20px;
+}
+
+.sidebar-title {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  letter-spacing: 1px;
+}
+
+.main-content {
+  margin-left: 250px;
+  margin-top: 56px;
+  padding: 30px;
+}
+
+.card-edu {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+
+.card-edu h5 {
+  color: #1e293b;
+  font-weight: 600;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #f0f4f8;
+  padding-bottom: 10px;
+}
+
+.kpi-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  border-left: 4px solid #1a56db;
+  transition: transform 0.2s;
+}
+
+.kpi-card:hover {
+  transform: translateY(-3px);
+}
+
+.kpi-card.green {
+  border-left-color: #10b981;
+}
+
+.kpi-card.orange {
+  border-left-color: #f59e0b;
+}
+
+.kpi-card.red {
+  border-left-color: #ef4444;
+}
+
+.kpi-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.kpi-label {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.badge-encours {
+  background-color: #10b981 !important;
+}
+
+.badge-retard {
+  background-color: #f59e0b !important;
+}
+
+.badge-absent {
+  background-color: #ef4444 !important;
+}
+
+.badge-brouillon {
+  background-color: #6b7280 !important;
+}
+
+.badge-signe-delegue {
+  background-color: #f59e0b !important;
+}
+
+.badge-cloture {
+  background-color: #10b981 !important;
+}
+
+.badge-generee {
+  background-color: #6b7280 !important;
+}
+
+.badge-signee {
+  background-color: #f59e0b !important;
+}
+
+.badge-visee {
+  background-color: #1a56db !important;
+}
+
+.badge-approuvee {
+  background-color: #10b981 !important;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+  .main-content {
+    margin-left: 0;
+  }
+}
